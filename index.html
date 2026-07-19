@@ -130,6 +130,38 @@
   .meal .mt{font-weight:700;font-size:14px;display:flex;justify-content:space-between;align-items:center}
   .meal .mt .mac{font-size:11px;color:var(--brand2);font-weight:700}
   .meal .mi{font-size:13px;color:var(--muted);margin-top:3px}
+  /* Nutrición · objetivo + sumador (fusión K1) */
+  .ntarget{background:linear-gradient(135deg,rgba(108,92,231,.16),rgba(0,210,184,.08));border:1px solid rgba(108,92,231,.32);border-radius:16px;padding:15px;margin-bottom:14px}
+  .ntarget .tt{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--brand2);font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;gap:8px}
+  .ntarget .tt .rt{color:var(--muted)}
+  .ntarget .nums{display:flex;gap:12px}
+  .ntarget .nn{flex:1}
+  .ntarget .nn .v{font-size:22px;font-weight:800;line-height:1.1}
+  .ntarget .nn .v small{font-size:12px;color:var(--muted);font-weight:600}
+  .ntarget .nn .l{font-size:11px;color:var(--muted);margin-top:2px}
+  .nmeter{height:8px;background:var(--bg2);border-radius:999px;overflow:hidden;margin-top:6px}
+  .nmeter>div{height:100%;border-radius:999px;transition:width .3s}
+  .nmeter.pm>div{background:linear-gradient(90deg,var(--brand),var(--brand2))}
+  .nmeter.km>div{background:linear-gradient(90deg,#ffb13c,#ff7a45)}
+  .fcat2{font-size:13px;font-weight:700;margin:16px 2px 8px}
+  .food{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+  .food .fn{flex:1;min-width:0}
+  .food .fn .nm{font-size:14px;font-weight:600;line-height:1.25}
+  .food .fn .q{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .fbadges{display:flex;gap:6px;flex:0 0 auto}
+  .fbdg{font-size:10px;font-weight:600;border-radius:8px;padding:5px 7px;text-align:center;line-height:1.15;min-width:46px}
+  .fbdg .bv{font-size:13px;font-weight:800;display:block}
+  .fbdg.p{background:rgba(0,210,184,.12);color:var(--brand2);border:1px solid rgba(0,210,184,.3)}
+  .fbdg.k{background:var(--card2);color:var(--muted);border:1px solid var(--line2)}
+  .fadd{flex:0 0 auto;width:40px;height:40px;border-radius:11px;border:1px solid rgba(108,92,231,.45);background:rgba(108,92,231,.14);color:#b3a7ff;font-size:21px;font-weight:700;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
+  .fadd:active{transform:scale(.9)}
+  .trow{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line2);border-radius:9px;padding:6px 8px 6px 11px;margin-bottom:5px}
+  .trow .tn{flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .trow .tk{font-size:11px;color:var(--muted);flex:0 0 auto}
+  .trow .tdec{flex:0 0 auto;width:27px;height:27px;border-radius:7px;border:1px solid var(--line2);background:var(--card2);color:#b3a7ff;font-size:17px;font-weight:700;cursor:pointer;line-height:1}
+  .tclear{background:none;border:none;color:#6b7590;font-size:12px;text-decoration:underline;cursor:pointer}
+  .thead{display:flex;justify-content:space-between;align-items:center;margin:0 2px 8px}
+  .thead span{font-size:12px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:var(--muted)}
   .drill{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line2)}
   .drill:last-child{border-bottom:none}
   .drill .n{flex:1;font-size:14px;font-weight:600}
@@ -191,18 +223,18 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} 
 /* ---------------- BIBLIOTECA DE EJERCICIOS ---------------- */
 /* base: series/reps de referencia; se ajustan por objetivo */
 const EX = {
-  sentadilla:{n:"Sentadilla", v:"goblet squat técnica", base:[4,"8"], obj:"Fuerza y potencia de piernas, base para todo.", tip:"Empuja el suelo con todo el pie; rodillas hacia fuera.", err:"Dejar caer las rodillas hacia dentro y perder la zona lumbar."},
-  pesomuerto:{n:"Peso muerto", v:"romanian deadlift form", base:[3,"6"], obj:"Cadena posterior: glúteo, isquios y espalda fuerte.", tip:"Bisagra de cadera, barra pegada al cuerpo, pecho orgulloso.", err:"Redondear la espalda baja o tirar con los brazos."},
-  pressbanca:{n:"Press de banca / flexiones", v:"bench press or push up", base:[4,"8"], obj:"Empuje horizontal: pecho, hombro y tríceps.", tip:"Escápulas retraídas, baja a la línea del pezón, codos ~45°.", err:"Rebotar la barra en el pecho o abrir los codos a 90°."},
-  presshombro:{n:"Press de hombro", v:"dumbbell shoulder press", base:[4,"8"], obj:"Empuje vertical y hombros estables.", tip:"Aprieta glúteos y abdomen; no arquees la zona lumbar.", err:"Arquear la espalda para levantar más peso."},
-  remo:{n:"Remo", v:"one arm dumbbell row", base:[4,"10"], obj:"Espalda ancha y postura; equilibra el empuje.", tip:"Tira con el codo hacia la cadera, sin encoger el hombro.", err:"Balancear el torso y tirar con la lumbar."},
-  dominada:{n:"Dominadas / Jalón", v:"pull up or lat pulldown", base:[4,"8"], obj:"Dorsal y agarre; tracción vertical.", tip:"Inicia bajando los omóplatos antes de doblar los codos.", err:"Solo mover los brazos sin activar la espalda."},
-  zancada:{n:"Zancada / Bulgarian", v:"bulgarian split squat", base:[3,"8/l"], obj:"Pierna unilateral, equilibrio y control de rodilla.", tip:"Torso ligeramente adelante; la rodilla sigue la punta del pie.", err:"Rodilla que colapsa hacia dentro o pasos demasiado cortos."},
-  hipthrust:{n:"Hip Thrust", v:"hip thrust glutes", base:[3,"10"], obj:"Glúteo potente: cadera y extensión.", tip:"Aprieta el glúteo arriba, costillas abajo, mentón metido.", err:"Hiperextender la lumbar en lugar de usar el glúteo."},
-  plancha:{n:"Plancha", v:"front plank hold", base:[3,"40s"], obj:"Core anti-extensión: tronco estable.", tip:"Aprieta glúteo y abdomen; cuerpo en línea recta.", err:"Dejar caer la cadera o subir demasiado el culo."},
-  pallof:{n:"Pallof Press", v:"pallof press", base:[3,"12"], obj:"Core anti-rotación: resistir el giro.", tip:"Estira los brazos sin dejar que el tronco rote.", err:"Girar el torso o mover la cadera."},
-  movbisagra:{n:"Kettlebell Swing", v:"kettlebell swing", base:[4,"12"], obj:"Potencia explosiva de cadera.", tip:"El swing sale de la cadera, no de los brazos.", err:"Sentadillar el movimiento en vez de bisagra."},
-  facepull:{n:"Face Pull", v:"face pull", base:[3,"15"], obj:"Salud de hombro y postura.", tip:"Lleva las manos a las orejas, aprieta atrás.", err:"Usar demasiado peso y encoger el trapecio."}
+  sentadilla:{n:"Sentadilla", vid:"q4CSeayuKbo", base:[4,"8"], obj:"Fuerza y potencia de piernas, base para todo.", tip:"Empuja el suelo con todo el pie; rodillas hacia fuera.", err:"Dejar caer las rodillas hacia dentro y perder la zona lumbar."},
+  pesomuerto:{n:"Peso muerto", vid:"uhghy9pFIPY", base:[3,"6"], obj:"Cadena posterior: glúteo, isquios y espalda fuerte.", tip:"Bisagra de cadera, barra pegada al cuerpo, pecho orgulloso.", err:"Redondear la espalda baja o tirar con los brazos."},
+  pressbanca:{n:"Press de banca / flexiones", vid:"Zi6c09DRGxk", base:[4,"8"], obj:"Empuje horizontal: pecho, hombro y tríceps.", tip:"Escápulas retraídas, baja a la línea del pezón, codos ~45°.", err:"Rebotar la barra en el pecho o abrir los codos a 90°."},
+  presshombro:{n:"Press de hombro", vid:"qEwKCR5JCog", base:[4,"8"], obj:"Empuje vertical y hombros estables.", tip:"Aprieta glúteos y abdomen; no arquees la zona lumbar.", err:"Arquear la espalda para levantar más peso."},
+  remo:{n:"Remo", vid:"gfUg6qWohTk", base:[4,"10"], obj:"Espalda ancha y postura; equilibra el empuje.", tip:"Tira con el codo hacia la cadera, sin encoger el hombro.", err:"Balancear el torso y tirar con la lumbar."},
+  dominada:{n:"Dominadas / Jalón", vid:"aNUSgyWRJYA", base:[4,"8"], obj:"Dorsal y agarre; tracción vertical.", tip:"Inicia bajando los omóplatos antes de doblar los codos.", err:"Solo mover los brazos sin activar la espalda."},
+  zancada:{n:"Zancada / Bulgarian", vid:"hiLF_pF3EJM", base:[3,"8/l"], obj:"Pierna unilateral, equilibrio y control de rodilla.", tip:"Torso ligeramente adelante; la rodilla sigue la punta del pie.", err:"Rodilla que colapsa hacia dentro o pasos demasiado cortos."},
+  hipthrust:{n:"Hip Thrust", vid:"z8WwUC_UA4w", base:[3,"10"], obj:"Glúteo potente: cadera y extensión.", tip:"Aprieta el glúteo arriba, costillas abajo, mentón metido.", err:"Hiperextender la lumbar en lugar de usar el glúteo."},
+  plancha:{n:"Plancha", vid:"A2b2EmIg0dA", base:[3,"40s"], obj:"Core anti-extensión: tronco estable.", tip:"Aprieta glúteo y abdomen; cuerpo en línea recta.", err:"Dejar caer la cadera o subir demasiado el culo."},
+  pallof:{n:"Pallof Press", vid:"axgv7H_VQOo", base:[3,"12"], obj:"Core anti-rotación: resistir el giro.", tip:"Estira los brazos sin dejar que el tronco rote.", err:"Girar el torso o mover la cadera."},
+  movbisagra:{n:"Kettlebell Swing", vid:"PAhDt_0PjP4", base:[4,"12"], obj:"Potencia explosiva de cadera.", tip:"El swing sale de la cadera, no de los brazos.", err:"Sentadillar el movimiento en vez de bisagra."},
+  facepull:{n:"Face Pull", vid:"ljgqer1ZpXg", base:[3,"15"], obj:"Salud de hombro y postura.", tip:"Lleva las manos a las orejas, aprieta atrás.", err:"Usar demasiado peso y encoger el trapecio."}
 };
 
 /* plantillas de sesión (full-body rotativas) */
@@ -254,7 +286,7 @@ function todaySession(dateOverride){
     let adaptNote = "";
     if(mem.lastFeel==="facil" && mem.lastWeight) adaptNote = "La última vez lo notaste fácil → sube un poco de carga.";
     if(mem.painFlag) adaptNote = "Reportaste molestia aquí → baja carga y prioriza técnica (o cámbialo si duele).";
-    return {key:k, name:e.n, v:e.v, obj:e.obj, tip:e.tip, err:e.err, sets, reps, lastWeight:mem.lastWeight||"", adaptNote};
+    return {key:k, name:e.n, vid:e.vid, obj:e.obj, tip:e.tip, err:e.err, sets, reps, lastWeight:mem.lastWeight||"", adaptNote};
   });
   return {tKey, title:t.title, focus:t.focus, express, duration: express?35:(goal==="grasa"?45:60), list};
 }
@@ -293,8 +325,17 @@ function nutritionTargets(){
   const pf = {fuerza:1.8, hipertrofia:2.0, grasa:1.9, rendimiento:1.8}[p.goal] || 1.8;
   const protein = Math.round(w*pf);
   const kcalBase = {fuerza:33, hipertrofia:36, grasa:27, rendimiento:34}[p.goal] || 32;
-  const kcal = Math.round(w*kcalBase);
-  return {protein, kcal};
+  let kcal = w*kcalBase;
+  // ajuste por ENTRENO del día y por ENERGÍA (estado de ánimo del check)
+  const d = (S.daily && S.daily.date===todayISO()) ? S.daily : null;
+  const training = d ? d.trainToday : !!todaySession();
+  let note = training ? "día de entreno" : "día de descanso";
+  kcal += training ? 250 : -100;
+  if(d){
+    if(d.energy==="baja"){ kcal -= 100; note += " · energía baja"; }
+    else if(d.energy==="alta" && training){ kcal += 100; note += " · energía alta"; }
+  }
+  return {protein, kcal:Math.round(kcal), note};
 }
 const MEALS = {
   desayuno:[
@@ -328,20 +369,74 @@ function cookIdea(sel){
   return "🍽️ Combina tu proteína ("+(sel.find(x=>["Huevos","Pollo","Atún","Lentejas","Yogur griego"].includes(x))||"la que tengas")+") con verduras y un carbohidrato real. Sencillo y funcional.";
 }
 
+/* ---- Sumador de alimentos (lo mejor de K1) → cuenta hacia el objetivo del día ---- */
+const FOODS = [
+  {cat:"🍳 Proteína animal", items:[
+    {n:"Huevos revueltos (3 enteros)", q:"con un poco de ghee", p:18, k:215},
+    {n:"Pechuga de pollo a la plancha", q:"150 g", p:46, k:245},
+    {n:"Ternera magra", q:"150 g", p:46, k:310},
+    {n:"Salmón", q:"150 g", p:37, k:310},
+    {n:"Pescado blanco (merluza)", q:"200 g", p:36, k:180},
+    {n:"Atún / bonito al natural", q:"1 lata (80 g)", p:20, k:95},
+    {n:"Gambas / langostinos", q:"150 g", p:36, k:150}
+  ]},
+  {cat:"🌱 Proteína vegetal", items:[
+    {n:"Lentejas cocidas", q:"200 g", p:18, k:230},
+    {n:"Garbanzos cocidos", q:"200 g", p:18, k:270},
+    {n:"Tofu firme", q:"150 g", p:17, k:170},
+    {n:"Tempeh", q:"100 g", p:19, k:190},
+    {n:"Edamame", q:"150 g", p:17, k:190}
+  ]},
+  {cat:"🥛 Lácteos proteicos", items:[
+    {n:"Yogur griego natural", q:"150 g", p:15, k:135},
+    {n:"Requesón / cottage", q:"150 g", p:17, k:150},
+    {n:"Kéfir", q:"250 ml", p:9, k:150}
+  ]},
+  {cat:"🍠 Carbohidratos", items:[
+    {n:"Avena", q:"60 g seco", p:10, k:230},
+    {n:"Arroz integral cocido", q:"150 g", p:4, k:165},
+    {n:"Quinoa cocida", q:"150 g", p:6, k:180},
+    {n:"Boniato", q:"200 g", p:3, k:180},
+    {n:"Pan integral", q:"2 rebanadas", p:8, k:160}
+  ]},
+  {cat:"🥑 Grasas buenas", items:[
+    {n:"Aguacate", q:"½ unidad", p:2, k:160},
+    {n:"Almendras / nueces", q:"30 g", p:6, k:180},
+    {n:"Crema de cacahuete", q:"1 cda (20 g)", p:5, k:120},
+    {n:"Aceite de oliva / ghee", q:"1 cda", p:0, k:120}
+  ]},
+  {cat:"🥦 Verduras y fruta", items:[
+    {n:"Verduras cocidas", q:"≈150 g", p:3, k:45},
+    {n:"Ensalada verde", q:"libre", p:2, k:30},
+    {n:"Fruta", q:"1 pieza", p:1, k:80},
+    {n:"Frutos rojos", q:"150 g", p:1, k:70}
+  ]},
+  {cat:"➕ Extra proteína", items:[
+    {n:"Proteína en polvo", q:"1 scoop (30 g)", p:24, k:120}
+  ]}
+];
+const FOODIDX = {};
+(function(){ let i=0; FOODS.forEach(c=>c.items.forEach(it=>{ it._id="f"+(i++); FOODIDX[it._id]={n:it.n,p:it.p,k:it.k}; })); })();
+function nutriDay(){ if(!S.nutriDay || S.nutriDay.date!==todayISO()) S.nutriDay={date:todayISO(), items:{}}; return S.nutriDay; }
+function addFood(id){ const d=nutriDay(); d.items[id]=(d.items[id]||0)+1; save(); }
+function decFood(id){ const d=nutriDay(); if(d.items[id]){ d.items[id]--; if(d.items[id]<=0) delete d.items[id]; save(); } }
+function clearNutri(){ S.nutriDay={date:todayISO(), items:{}}; save(); }
+function nutriTotals(){ const d=nutriDay(); let p=0,k=0; for(const id in d.items){ const f=FOODIDX[id]; if(f){ p+=f.p*d.items[id]; k+=f.k*d.items[id]; } } return {p:Math.round(p), k:Math.round(k)}; }
+
 /* ---------------- MOVILIDAD ---------------- */
 const MOB = {
-  cadera:["Sentadilla profunda sostenida 60s","90/90 cadera 8/lado","Zancada con rotación torácica 6/lado"],
-  tobillo:["Movilidad de tobillo a la pared 10/lado","Isométrico de gemelo 30s","Círculos de tobillo 10/lado"],
-  hombro:["Dislocaciones con banda 10","Cara de vaca / apertura pecho 30s","Deslizamientos en pared 10"],
-  columna:["Gato-camello 10","Rotación torácica en cuadrupedia 8/lado","Cobra suave 30s"],
-  general:["Respiración diafragmática 2 min","Balanceos de pierna 10/lado","Movilidad de cuello suave 8/dir"]
+  cadera:[{n:"Sentadilla profunda sostenida 60s",vid:"0wzrgyAurT8"},{n:"90/90 de cadera 8/lado",vid:"t4Zz6-aG8Iw"}],
+  tobillo:[{n:"Tobillo a la pared (rodilla al muro) 10/lado",vid:"u3NbKOXl75k"},{n:"Elevación de gemelo 15",vid:"SVtg-1loH4c"}],
+  hombro:[{n:"Dislocaciones con banda 10",vid:"A89YEvv7u2s"},{n:"Deslizamientos en pared (wall slides) 10",vid:"OtgQDv7u1TM"}],
+  columna:[{n:"Gato-camello 10",vid:"dRXO0agekxA"},{n:"Rotación torácica en cuadrupedia 8/lado",vid:"snzLuyYgbVI"}],
+  general:[{n:"Balanceos de pierna 10/lado",vid:"difYoBtZi2s"},{n:"Respiración diafragmática 2 min",vid:"9jpchJcKivk"}]
 };
 function mobilityRoutine(){
   const focus = (S.profile.mobility||[]).slice();
   let picks = [];
   focus.forEach(f=>{ if(MOB[f]) picks.push(...MOB[f].slice(0,2)); });
   // añade según dolor del check
-  if(S.daily && S.daily.date===todayISO() && S.daily.pain) picks.unshift("Zona con molestia: movilidad muy suave y sin dolor 2 min");
+  if(S.daily && S.daily.date===todayISO() && S.daily.pain) picks.unshift({n:"Zona con molestia: movilidad muy suave y sin dolor 2 min", vid:null});
   picks.push(...MOB.general.slice(0,2));
   // dedup y recorta a 5-6
   picks = [...new Set(picks)].slice(0,6);
@@ -543,21 +638,52 @@ function checkCardHTML(){
 /* ---------------- NUTRICIÓN ---------------- */
 function renderNutri(){
   const t = nutritionTargets();
+  const tot = nutriTotals();
+  const day = nutriDay();
+  const pPct = Math.min(100, Math.round(tot.p/Math.max(1,t.protein)*100));
+  const kPct = Math.min(100, Math.round(tot.k/Math.max(1,t.kcal)*100));
   const suppl = S.profile.goal==="grasa" ? "Creatina 5 g · Vitamina D · Omega-3" : "Creatina 5 g · Proteína si no llegas · Omega-3";
-  let html = `<div class="sec-title">Módulo Nutrición</div>
-    <div class="card">
-      <div class="grid2">
-        <div class="stat"><div class="v">${t.protein}<small> g</small></div><div class="l">Proteína objetivo</div></div>
-        <div class="stat"><div class="v">${t.kcal}</div><div class="l">kcal aprox / día</div></div>
-      </div>
-      <p class="muted" style="font-size:12.5px;margin:12px 0 0">Ajustado a tu objetivo (${GOAL_LABEL[S.profile.goal]}), peso y actividad de hoy. Combina libre; la proteína es lo no negociable.</p>
+
+  let html = `<div class="sec-title">Módulo Nutrición</div>`;
+
+  // OBJETIVO INTELIGENTE + PROGRESO (fusión: meta THP + sumador K1)
+  html += `<div class="ntarget">
+    <div class="tt"><span>Objetivo de hoy</span><span class="rt">${t.note}</span></div>
+    <div class="nums">
+      <div class="nn"><div class="v">${tot.p}<small> / ${t.protein} g</small></div><div class="l">proteína</div><div class="nmeter pm"><div style="width:${pPct}%"></div></div></div>
+      <div class="nn"><div class="v">${tot.k}<small> / ${t.kcal}</small></div><div class="l">kcal</div><div class="nmeter km"><div style="width:${kPct}%"></div></div></div>
     </div>
-    <div class="sec-title">Menú de hoy (auto-generado)</div>`;
+    <p class="muted" style="font-size:12px;margin:11px 0 0">Meta ajustada a tu objetivo (${GOAL_LABEL[S.profile.goal]}), a si entrenas hoy y a tu energía. Suma alimentos abajo con ＋.</p>
+  </div>`;
+
+  // AÑADIDO HOY (tally con quitar / vaciar)
+  const ids = Object.keys(day.items);
+  if(ids.length){
+    html += `<div class="thead"><span>Añadido hoy</span><button class="tclear" data-clear="1">vaciar</button></div>`;
+    ids.forEach(id=>{ const f=FOODIDX[id], c=day.items[id];
+      html += `<div class="trow"><span class="tn">${f.n}${c>1?" ×"+c:""}</span><span class="tk">${f.p*c} g · ${f.k*c} kcal</span><button class="tdec" data-dec="${id}" aria-label="Quitar">−</button></div>`;
+    });
+  }
+
+  // DESPENSA / SUMADOR
+  html += `<div class="sec-title">Suma tu día · toca ＋</div>`;
+  FOODS.forEach(c=>{
+    html += `<div class="fcat2">${c.cat}</div>`;
+    c.items.forEach(it=>{
+      html += `<div class="food"><div class="fn"><div class="nm">${it.n}</div><div class="q">${it.q}</div></div>`+
+        `<div class="fbadges"><div class="fbdg p"><span class="bv">${it.p} g</span>prot</div><div class="fbdg k"><span class="bv">${it.k}</span>kcal</div></div>`+
+        `<button class="fadd" data-add="${it._id}" aria-label="Sumar">＋</button></div>`;
+    });
+  });
+
+  // IDEAS DE MENÚ + SUPLEMENTACIÓN
+  html += `<div class="sec-title">Ideas de menú (auto)</div>`;
   [["🌅 Desayuno","desayuno"],["☀️ Comida","comida"],["🌙 Cena","cena"],["🍎 Snack","snack"]].forEach(m=>{
     html += `<div class="meal"><div class="mt">${m[0]}</div><div class="mi">${pickMeal(m[1])}</div></div>`;
   });
   html += `<div class="meal" style="border-color:var(--brand2)"><div class="mt">💊 Suplementación</div><div class="mi">${suppl}</div></div>`;
 
+  // COCINA CON LO QUE TENGO
   html += `<div class="sec-title">¿Qué cocino con lo que tengo?</div>
     <div class="card">
       <div class="chips" id="pantry">${PANTRY.map(p=>`<div class="chip" data-v="${p}">${p}</div>`).join("")}</div>
@@ -576,7 +702,7 @@ function renderMovil(){
       <p class="mission">Adaptada a tu entreno, tus dolores y tu foco. <b>Nunca es igual.</b></p>
     </div>
     <div class="card">`;
-  r.picks.forEach((d,i)=> html += `<div class="drill"><div class="num">${i+1}</div><div class="n">${d}</div></div>`);
+  r.picks.forEach((d,i)=> html += `<div class="drill"><div class="num">${i+1}</div><div class="n">${d.n}</div>${d.vid?`<a class="dur" href="https://youtu.be/${d.vid}" target="_blank" rel="noopener" style="text-decoration:none">▶ vídeo</a>`:""}</div>`);
   html += `</div>
     <div class="sec-title">Recuperación</div>
     <div class="card flat">
@@ -699,7 +825,7 @@ function renderFlow(){
       <div class="exname">${ex.name}</div>
       <div class="exsch">${ex.sets} × ${ex.reps}</div>
       ${ex.adaptNote?`<div class="info-b" style="border-color:var(--brand)"><p style="color:var(--brand2)">🤖 ${ex.adaptNote}</p></div>`:""}
-      <a class="btn" style="margin-top:12px" href="${yt(ex.v)}" target="_blank" rel="noopener">▶︎ Ver vídeo demostrativo</a>
+      <a class="btn" style="margin-top:12px" href="https://youtu.be/${ex.vid}" target="_blank" rel="noopener">▶︎ Ver vídeo demostrativo</a>
       <div class="info-b obj"><div class="h">🎯 Objetivo</div><p>${ex.obj}</p></div>
       <div class="info-b tip"><div class="h">🗣️ Consejo del entrenador</div><p>${ex.tip}</p></div>
       <div class="info-b err"><div class="h">⚠️ Error más frecuente</div><p>${ex.err}</p></div>
@@ -780,6 +906,11 @@ function postRender(){
       el("cookP").textContent = cookIdea(sel);
     });
   }
+  // sumador de nutrición (conserva scroll al re-renderizar)
+  const reRender = ()=>{ const y=window.scrollY; render(); window.scrollTo(0,y); };
+  document.querySelectorAll(".fadd").forEach(bt=> bt.onclick=()=>{ addFood(bt.dataset.add); const f=FOODIDX[bt.dataset.add]; toast("+"+f.p+" g · "+f.k+" kcal"); if(navigator.vibrate) navigator.vibrate(15); reRender(); });
+  document.querySelectorAll("[data-dec]").forEach(bt=> bt.onclick=()=>{ decFood(bt.dataset.dec); reRender(); });
+  const cl=document.querySelector("[data-clear]"); if(cl) cl.onclick=()=>{ if(confirm("¿Vaciar el conteo de hoy?")){ clearNutri(); reRender(); } };
   // reset
   if(el("resetBtn")) el("resetBtn").onclick = ()=>{ if(confirm("¿Borrar tu perfil, memoria e historial? No se puede deshacer.")){ localStorage.removeItem(KEY); S=null; render(); } };
 }
@@ -803,7 +934,7 @@ function toast(m){ const t=el("toast"); t.textContent=m; t.classList.add("show")
 
 /* ---------- Service worker (offline) ---------- */
 if("serviceWorker" in navigator){
-  const sw=`const C="thp-cache-v1";self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(caches.open(C).then(c=>fetch(e.request).then(r=>{c.put(e.request,r.clone());return r;}).catch(()=>c.match(e.request))));});`;
+  const sw=`const C="thp-cache-v3";self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(caches.open(C).then(c=>fetch(e.request).then(r=>{c.put(e.request,r.clone());return r;}).catch(()=>c.match(e.request))));});`;
   try{ navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:"text/javascript"}))).catch(()=>{}); }catch(e){}
 }
 
