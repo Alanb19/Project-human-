@@ -112,6 +112,8 @@
   .info-b p{margin:0;font-size:14px;color:#d6dcea}
   .flow-foot{padding:14px 16px;border-top:1px solid var(--line2);background:var(--bg)}
   .selfeval{display:flex;gap:8px;margin:4px 0 12px}
+  .mchk{flex:0 0 auto;width:28px;height:28px;border-radius:8px;border:1px solid var(--line2);background:var(--bg2);color:var(--muted);font-size:15px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
+  .mchk.on{background:var(--brand);border-color:var(--brand);color:#fff}
   .selfeval button{flex:1;border-radius:12px;border:1px solid var(--line2);background:var(--bg2);color:var(--txt);padding:11px 4px;font-size:13px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
   .selfeval button .e{font-size:20px}
   .selfeval button.on{border-color:var(--brand);background:rgba(108,92,231,.15)}
@@ -242,15 +244,35 @@ const EX = {
   plancha:{n:"Plancha", vid:"A2b2EmIg0dA", base:[3,"40s"], obj:"Core anti-extensión: tronco estable.", tip:"Aprieta glúteo y abdomen; cuerpo en línea recta.", err:"Dejar caer la cadera o subir demasiado el culo."},
   pallof:{n:"Pallof Press", vid:"axgv7H_VQOo", base:[3,"12"], obj:"Core anti-rotación: resistir el giro.", tip:"Estira los brazos sin dejar que el tronco rote.", err:"Girar el torso o mover la cadera."},
   movbisagra:{n:"Kettlebell Swing", vid:"PAhDt_0PjP4", base:[4,"12"], obj:"Potencia explosiva de cadera.", tip:"El swing sale de la cadera, no de los brazos.", err:"Sentadillar el movimiento en vez de bisagra."},
-  facepull:{n:"Face Pull", vid:"ljgqer1ZpXg", base:[3,"15"], obj:"Salud de hombro y postura.", tip:"Lleva las manos a las orejas, aprieta atrás.", err:"Usar demasiado peso y encoger el trapecio."}
+  facepull:{n:"Face Pull", vid:"ljgqer1ZpXg", base:[3,"15"], obj:"Salud de hombro y postura.", tip:"Lleva las manos a las orejas, aprieta atrás.", err:"Usar demasiado peso y encoger el trapecio."},
+  pushpress:{n:"Push Press", vid:"HKx22sWywxc", base:[4,"5"], obj:"Empuje explosivo: piernas + hombro, potencia de tren superior.", tip:"Impulso corto de piernas y transfiere a la barra sin pausa.", err:"Separar el impulso de piernas del empuje (llegar tarde)."}
 };
 
 /* plantillas de sesión (full-body rotativas) */
-const TEMPLATES = {
-  A:{title:"FUERZA A", focus:"Cuerpo completo · empuje", ex:["sentadilla","pressbanca","remo","hipthrust","plancha"]},
-  B:{title:"FUERZA B", focus:"Cuerpo completo · tracción", ex:["pesomuerto","presshombro","dominada","zancada","pallof"]},
-  C:{title:"POTENCIA / FULL", focus:"Explosivo + core", ex:["movbisagra","sentadilla","dominada","facepull","plancha"]}
+/* PROGRAMAS POR ENFOQUE — cada objetivo cambia los ejercicios, no solo las reps */
+const PROGRAMS = {
+  fuerza:{
+    A:{title:"FUERZA · INFERIOR", focus:"Básicos pesados de pierna", ex:["sentadilla","pesomuerto","zancada","plancha"]},
+    B:{title:"FUERZA · SUPERIOR", focus:"Empuje y tracción pesados", ex:["pressbanca","dominada","presshombro","remo"]},
+    C:{title:"FUERZA · TOTAL", focus:"Los grandes movimientos", ex:["sentadilla","pressbanca","remo","hipthrust","pallof"]}
+  },
+  hipertrofia:{
+    A:{title:"VOLUMEN · EMPUJE", focus:"Pecho, hombro y core", ex:["pressbanca","presshombro","pushpress","plancha","pallof"]},
+    B:{title:"VOLUMEN · TRACCIÓN", focus:"Espalda, glúteo y hombro", ex:["dominada","remo","facepull","hipthrust"]},
+    C:{title:"VOLUMEN · PIERNA", focus:"Cuádriceps, glúteo e isquios", ex:["sentadilla","zancada","pesomuerto","hipthrust","plancha"]}
+  },
+  grasa:{
+    A:{title:"QUEMA · FULL A", focus:"Circuito cuerpo completo", ex:["sentadilla","pressbanca","remo","movbisagra","plancha"]},
+    B:{title:"QUEMA · FULL B", focus:"Circuito cuerpo completo", ex:["pesomuerto","presshombro","dominada","zancada","pallof"]},
+    C:{title:"QUEMA · METCON", focus:"Cardio-fuerza denso", ex:["movbisagra","hipthrust","pushpress","zancada","plancha"]}
+  },
+  rendimiento:{
+    A:{title:"POTENCIA · INFERIOR", focus:"Explosividad + fuerza de pierna", ex:["movbisagra","sentadilla","pesomuerto","zancada","plancha"]},
+    B:{title:"POTENCIA · SUPERIOR", focus:"Empuje explosivo y tracción", ex:["pushpress","dominada","pressbanca","remo","facepull"]},
+    C:{title:"POTENCIA · TOTAL", focus:"Cadera explosiva + core", ex:["movbisagra","hipthrust","pushpress","sentadilla","pallof"]}
+  }
 };
+function curProgram(){ return PROGRAMS[S.profile.goal] || PROGRAMS.rendimiento; }
 const ROTATION = ["A","B","C"];
 
 /* ajuste de series/reps por objetivo */
@@ -285,7 +307,7 @@ function plannedKey(){ return S.plan.week[new Date().getDay()]; }
 /* construye la ficha de CUALQUIER sesión por su plantilla (flexibilidad total) */
 function buildSession(tKey){
   if(!tKey) return null;
-  const t = TEMPLATES[tKey];
+  const t = curProgram()[tKey];
   const goal = S.profile.goal;
   const express = S.daily && S.daily.date===todayISO() && S.daily.energy==="baja";
   let list = t.ex.map(k=>{
@@ -308,6 +330,8 @@ function ensureState(){
   if(!S.memory) S.memory = {ex:{}};
   if(!S.history) S.history = [];
   if(!S.progress) S.progress = {};
+  if(!S.mobilityLog) S.mobilityLog = [];   // historial de movilidad
+  if(!S.mobBest) S.mobBest = {};           // mejores marcas de benchmarks
 }
 
 function logWorkout(session, entries, meta){
@@ -447,6 +471,9 @@ function mobilityRoutine(){
   const focus = (S.profile.mobility||[]).slice();
   let picks = [];
   focus.forEach(f=>{ if(MOB[f]) picks.push(...MOB[f].slice(0,2)); });
+  // ADAPTACIÓN: prioriza la zona que marcaste rígida en tu último registro
+  const lastLog = (S.mobilityLog && S.mobilityLog.length) ? S.mobilityLog[S.mobilityLog.length-1] : null;
+  if(lastLog && lastLog.tight && MOB[lastLog.tight]) picks.unshift(...MOB[lastLog.tight].slice(0,2));
   // añade según dolor del check
   if(S.daily && S.daily.date===todayISO() && S.daily.pain) picks.unshift({n:"Zona con molestia: movilidad muy suave y sin dolor 2 min", vid:null});
   picks.push(...MOB.general.slice(0,2));
@@ -611,7 +638,7 @@ function renderHoy(){
 
   // SELECTOR DE SESIÓN — flexibilidad total (como en K1: cualquier ficha, cualquier día)
   html += `<div class="sec-title">Entrena la sesión que quieras · flexible</div><div class="picker">`;
-  ROTATION.forEach(k=>{ const t=TEMPLATES[k], isP=(k===planned), isA=(k===activeKey);
+  ROTATION.forEach(k=>{ const t=curProgram()[k], isP=(k===planned), isA=(k===activeKey);
     html += `<button class="pick ${isA?'on':''}" data-pick="${k}"><span class="pt">${t.title}</span><span class="pf">${t.focus}</span>${isP?'<span class="prec">hoy</span>':''}</button>`; });
   html += `</div>`;
 
@@ -715,23 +742,95 @@ function renderNutri(){
 }
 
 /* ---------------- MOVILIDAD ---------------- */
+/* --- movilidad: registro, benchmarks y progreso --- */
+function logMobility(entry){
+  ensureState();
+  S.mobilityLog.push(entry);
+  if(entry.squat!=null && (S.mobBest.squat==null || entry.squat>S.mobBest.squat)) S.mobBest.squat=entry.squat;
+  if(entry.ankle!=null && (S.mobBest.ankle==null || entry.ankle>S.mobBest.ankle)) S.mobBest.ankle=entry.ankle;
+  save();
+}
+function mobStreak(){ const days=new Set(S.mobilityLog.map(e=>e.date)); let s=0,d=new Date(); for(;;){ const iso=d.toISOString().slice(0,10); if(days.has(iso)){s++;d.setDate(d.getDate()-1);} else break; } return s; }
+function benchTrend(key){ const v=S.mobilityLog.filter(e=>e[key]!=null); if(!v.length) return null; return {first:v[0][key], last:v[v.length-1][key], best:Math.max(...v.map(x=>x[key])), delta:v[v.length-1][key]-v[0][key]}; }
+function benchRow(label, t, unit){
+  if(!t) return `<div class="drill"><div class="n">${label}</div><div class="dur muted">sin datos aún</div></div>`;
+  const arrow=t.delta>0?"↑":t.delta<0?"↓":"→", col=t.delta>0?"var(--green)":t.delta<0?"var(--red)":"var(--muted)";
+  const chg=t.delta>0?"+"+t.delta:(t.delta===0?"=":t.delta);
+  return `<div class="drill"><div class="n">${label}<div class="muted" style="font-size:11px">mejor histórico: ${t.best} ${unit}</div></div><div class="dur">${t.last} ${unit} <span style="color:${col}">${arrow}${chg}</span></div></div>`;
+}
+function feelStr(f){ return {rigido:"😣 rígido",normal:"😐 normal",suelto:"😌 suelto"}[f]||"—"; }
+const AREAS = {cadera:"Cadera",tobillo:"Tobillo",hombro:"Hombro",columna:"Columna"};
+
 function renderMovil(){
+  ensureState();
   const r = mobilityRoutine();
+  const log = S.mobilityLog;
+  const last = log.length ? log[log.length-1] : null;
+
   let html = `<div class="sec-title">Módulo Movilidad y Recuperación</div>
     <div class="hero">
       <div class="day">Rutina de hoy</div>
       <div class="obj" style="font-size:24px">${r.mins} min de movilidad</div>
       <p class="mission">Adaptada a tu entreno, tus dolores y tu foco. <b>Nunca es igual.</b></p>
     </div>
-    <div class="card">`;
-  r.picks.forEach((d,i)=> html += `<div class="drill"><div class="num">${i+1}</div><div class="n">${d.n}</div>${d.vid?`<a class="dur" href="https://youtu.be/${d.vid}" target="_blank" rel="noopener" style="text-decoration:none">▶ vídeo</a>`:""}</div>`);
-  html += `</div>
-    <div class="sec-title">Recuperación</div>
+    <div class="card" id="mobDrills">`;
+  r.picks.forEach((d,i)=> html += `<div class="drill">
+      <button class="mchk" data-i="${i}" data-n="${encodeURIComponent(d.n)}" aria-label="Marcar hecho">○</button>
+      <div class="n">${d.n}</div>
+      ${d.vid?`<a class="dur" href="https://youtu.be/${d.vid}" target="_blank" rel="noopener" style="text-decoration:none">▶ vídeo</a>`:""}
+    </div>`);
+  html += `</div>`;
+
+  // REGISTRO DE LA SESIÓN
+  html += `<div class="card">
+    <div style="font-weight:800;font-size:15px">Registrar tu movilidad</div>
+    <div class="muted" style="font-size:12.5px;margin-top:2px">Documenta el avance: la app aprende y ajusta tu rutina a tus zonas rígidas.</div>
+    <label class="fl">¿Cómo notas la movilidad hoy?</label>
+    <div class="selfeval" id="mFeel">
+      <button data-v="rigido"><span class="e">😣</span>Rígido</button>
+      <button data-v="normal"><span class="e">😐</span>Normal</button>
+      <button data-v="suelto"><span class="e">😌</span>Suelto</button>
+    </div>
+    <label class="fl">¿Zona especialmente rígida hoy?</label>
+    <div class="chips" id="mTight">
+      ${Object.entries(AREAS).map(([k,v])=>`<div class="chip" data-v="${k}">${v}</div>`).join("")}<div class="chip on" data-v="">Ninguna</div>
+    </div>
+    <label class="fl">Benchmarks (mide tu avance)</label>
+    <div class="grid2">
+      <div><label class="fl" style="margin-top:0">Sentadilla profunda · aguante (seg)</label><input id="mSquat" inputmode="numeric" placeholder="—" value="${last&&last.squat!=null?last.squat:""}"></div>
+      <div><label class="fl" style="margin-top:0">Tobillo a la pared (cm)</label><input id="mAnkle" inputmode="numeric" placeholder="—" value="${last&&last.ankle!=null?last.ankle:""}"></div>
+    </div>
+    <label class="fl">Notas (opcional)</label>
+    <input id="mNote" placeholder="p. ej. cadera derecha más suelta que ayer">
+    <button class="btn primary" id="mReg" style="margin-top:14px">Registrar sesión de movilidad</button>
+  </div>`;
+
+  // RECUPERACIÓN
+  html += `<div class="sec-title">Recuperación</div>
     <div class="card flat">
       <div class="drill"><div class="ic" style="font-size:20px">🫁</div><div class="n">Respiración 4-7-8 · 2 min</div><div class="dur">bajar pulso</div></div>
       <div class="drill"><div class="ic" style="font-size:20px">💧</div><div class="n">Hidratación + electrolitos</div><div class="dur">clave</div></div>
       <div class="drill"><div class="ic" style="font-size:20px">😴</div><div class="n">Sueño 7-9 h</div><div class="dur">nº1</div></div>
     </div>`;
+
+  // PROGRESO DE MOVILIDAD
+  html += `<div class="sec-title">Progreso de movilidad</div>`;
+  if(log.length){
+    html += `<div class="grid2">
+      <div class="stat"><div class="v">${log.length}</div><div class="l">Sesiones registradas</div></div>
+      <div class="stat"><div class="v">${mobStreak()}<small> 🔥</small></div><div class="l">Racha (días)</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      ${benchRow("🧍 Sentadilla profunda", benchTrend("squat"), "seg")}
+      ${benchRow("🦶 Tobillo a la pared", benchTrend("ankle"), "cm")}
+      <div class="drill"><div class="n">Sensación reciente</div><div class="dur">${feelStr(last.feel)}${last.tight?" · rígido: "+(AREAS[last.tight]||last.tight):""}</div></div>
+    </div>
+    <div class="sec-title">Historial reciente</div><div class="card">`;
+    log.slice(-6).reverse().forEach(e=> html += `<div class="drill"><div class="n">${e.date}<div class="muted" style="font-size:11px">${(e.done||[]).length} ejercicios${e.tight?" · "+(AREAS[e.tight]||e.tight):""}${e.note?" · "+e.note:""}</div></div><div class="dur">${feelStr(e.feel)}${e.squat!=null?" · "+e.squat+"s":""}${e.ankle!=null?" · "+e.ankle+"cm":""}</div></div>`);
+    html += `</div>`;
+  } else {
+    html += `<div class="card muted" style="text-align:center;font-size:13px">Aún sin registros. Marca tus ejercicios, valora cómo te sientes y pulsa <b>Registrar</b>: tu progreso de movilidad empieza a documentarse y la app se adaptará a ti.</div>`;
+  }
   return html;
 }
 
@@ -753,7 +852,7 @@ function renderProg(){
     </div>`;
 
   html += `<div class="sec-title">No solo kilos — tu historia</div><div class="card">`;
-  const metrics = [["💪 Fuerza", trendFuerza()],["🧘 Movilidad", S.profile.mobility.length?"En trabajo activo":"Sin foco aún"],
+  const metrics = [["💪 Fuerza", trendFuerza()],["🧘 Movilidad", S.mobilityLog.length?(S.mobilityLog.length+" sesiones registradas"):"Sin registros aún"],
     ["🎯 Técnica", techScore()],["⚖️ Peso", S.profile.weight+" kg"],
     ["🔥 Hábitos", sessions>0?"Construyéndose":"Empieza hoy"],["😴 Recuperación", recoveryScore()]];
   metrics.forEach(m=> html += `<div class="drill"><div class="n">${m[0]}</div><div class="dur">${m[1]}</div></div>`);
@@ -817,6 +916,8 @@ function coachAdvice(){
   if(painEx.length) out.push(`He detectado molestia repetida en <b>${painEx.join(", ")}</b>. Los mantengo con carga suave o los sustituyo hasta que estés al 100%.`);
   const easyEx = Object.entries(S.memory.ex).filter(([k,m])=>m.lastFeel==="facil").map(([k])=>EX[k]?EX[k].n:k);
   if(easyEx.length) out.push(`Notaste fáciles: <b>${easyEx.join(", ")}</b> → toca subir carga la próxima vez. Progreso.`);
+  if(S.mobilityLog && S.mobilityLog.length){ const lm=S.mobilityLog[S.mobilityLog.length-1];
+    if(lm.tight) out.push(`Tu movilidad marcó rigidez en <b>${AREAS[lm.tight]||lm.tight}</b>: he priorizado esa zona en tu rutina de hoy. Documentar cada sesión es lo que me permite adaptarme a ti.`); }
   out.push(`💡 ${todayTip()}`);
   return out;
 }
@@ -936,6 +1037,19 @@ function postRender(){
   document.querySelectorAll(".fadd").forEach(bt=> bt.onclick=()=>{ addFood(bt.dataset.add); const f=FOODIDX[bt.dataset.add]; toast("+"+f.p+" g · "+f.k+" kcal"); if(navigator.vibrate) navigator.vibrate(15); reRender(); });
   document.querySelectorAll("[data-dec]").forEach(bt=> bt.onclick=()=>{ decFood(bt.dataset.dec); reRender(); });
   const cl=document.querySelector("[data-clear]"); if(cl) cl.onclick=()=>{ if(confirm("¿Vaciar el conteo de hoy?")){ clearNutri(); reRender(); } };
+  // movilidad: checklist + registro
+  if(el("mobDrills")){
+    el("mobDrills").querySelectorAll(".mchk").forEach(b=> b.onclick=()=>{ const on=b.classList.toggle("on"); b.textContent=on?"✓":"○"; });
+    if(el("mFeel")) el("mFeel").querySelectorAll("button").forEach(b=> b.onclick=()=>{ el("mFeel").querySelectorAll("button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); });
+    if(el("mTight")) el("mTight").querySelectorAll(".chip").forEach(c=> c.onclick=()=>{ el("mTight").querySelectorAll(".chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); });
+    if(el("mReg")) el("mReg").onclick=()=>{
+      const fb=el("mFeel").querySelector("button.on"), tc=el("mTight").querySelector(".chip.on");
+      const done=[...el("mobDrills").querySelectorAll(".mchk.on")].map(b=>decodeURIComponent(b.dataset.n));
+      const sq=parseInt(el("mSquat").value); const an=parseInt(el("mAnkle").value);
+      logMobility({ date:todayISO(), done, feel: fb?fb.dataset.v:"normal", tight: tc?tc.dataset.v:"", squat: isNaN(sq)?null:sq, ankle: isNaN(an)?null:an, note: (el("mNote").value||"").trim() });
+      toast("Movilidad registrada 🧘 · la app se adapta"); if(navigator.vibrate) navigator.vibrate(15); render();
+    };
+  }
   // reset
   if(el("resetBtn")) el("resetBtn").onclick = ()=>{ if(confirm("¿Borrar tu perfil, memoria e historial? No se puede deshacer.")){ localStorage.removeItem(KEY); S=null; render(); } };
 }
@@ -959,7 +1073,7 @@ function toast(m){ const t=el("toast"); t.textContent=m; t.classList.add("show")
 
 /* ---------- Service worker (offline) ---------- */
 if("serviceWorker" in navigator){
-  const sw=`const C="thp-cache-v4";self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(caches.open(C).then(c=>fetch(e.request).then(r=>{c.put(e.request,r.clone());return r;}).catch(()=>c.match(e.request))));});`;
+  const sw=`const C="thp-cache-v6";self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(caches.open(C).then(c=>fetch(e.request).then(r=>{c.put(e.request,r.clone());return r;}).catch(()=>c.match(e.request))));});`;
   try{ navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:"text/javascript"}))).catch(()=>{}); }catch(e){}
 }
 
